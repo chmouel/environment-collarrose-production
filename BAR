@@ -107,12 +107,26 @@ func newGH(token string) *GH {
 
 func app() error {
 	ctx := context.Background()
+	commonFlag := []cli.Flag{
+		&cli.StringFlag{
+			Name:  "token",
+			Usage: "github token",
+			EnvVars: []string{
+				"GITHUB_TOKEN",
+			},
+		},
+		&cli.StringFlag{
+			Name:  "message",
+			Usage: "commit message",
+		},
+	}
 	app := &cli.App{
 		EnableBashCompletion: true,
 		Version:              "1.0.0",
 		Commands: []*cli.Command{
 			{
-				Name: "upload",
+				Name:  "upload",
+				Flags: commonFlag,
 				Action: func(c *cli.Context) error {
 					src := c.Args().Get(0)
 					dst := c.Args().Get(1)
@@ -125,15 +139,6 @@ func app() error {
 					return g.upload(ctx, src, dst)
 				},
 				Usage: "upload a file",
-			},
-		},
-		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:  "token",
-				Usage: "github token",
-				EnvVars: []string{
-					"GITHUB_TOKEN",
-				},
 			},
 		},
 	}
