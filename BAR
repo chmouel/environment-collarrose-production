@@ -94,7 +94,7 @@ func (g *GH) upload(ctx context.Context, src, dst string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Printf("File has been uploaded to: %s\n", ud.GetContent().GetHTMLURL())
+		fmt.Printf("File has been updated on: %s\n", ud.GetContent().GetHTMLURL())
 	}
 	return nil
 }
