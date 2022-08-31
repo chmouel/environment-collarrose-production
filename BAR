@@ -70,16 +70,32 @@ func (g *GH) upload(ctx context.Context, src, dst string) error {
 		}
 		branch = branchInfo.GetDefaultBranch()
 	}
-	fmt.Println("branch:", branch)
-	cntResp, _, err := g.client.Repositories.CreateFile(ctx, blob.owner, blob.repo, blob.path, &github.RepositoryContentFileOptions{
-		Message: github.String("Uploaded by ghupload"),
-		Content: content,
-		Branch:  github.String(branch),
-	})
-	if err != nil {
-		return err
+	fc, dc, _, _ := g.client.Repositories.GetContents(ctx, blob.owner, blob.repo, blob.path, &github.RepositoryContentGetOptions{})
+	if dc != nil {
+		return fmt.Errorf("destination is a directory: %s", dst)
 	}
-	fmt.Printf("File has been uploaded to: %s\n", cntResp.GetContent().GetHTMLURL())
+	// if file hasn't been uploaded yet, create it
+	if fc == nil {
+		cntResp, _, err := g.client.Repositories.CreateFile(ctx, blob.owner, blob.repo, blob.path, &github.RepositoryContentFileOptions{
+			Message: github.String("Uploaded by ghupload"),
+			Content: content,
+			Branch:  github.String(branch),
+		})
+		if err != nil {
+			return err
+		}
+		fmt.Printf("File has been uploaded to: %s\n", cntResp.GetContent().GetHTMLURL())
+	} else { // else update the file
+		ud, _, err := g.client.Repositories.UpdateFile(ctx, blob.owner, blob.repo, blob.path, &github.RepositoryContentFileOptions{
+			Message: github.String("Uploaded by ghupload"),
+			SHA:     fc.SHA,
+			Content: content,
+		})
+		if err != nil {
+			return err
+		}
+		fmt.Printf("File has been uploaded to: %s\n", ud.GetContent().GetHTMLURL())
+	}
 	return nil
 }
 
