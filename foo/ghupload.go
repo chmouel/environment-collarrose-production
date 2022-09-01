@@ -69,7 +69,7 @@ func app() error {
 
 					g := ghupload.NewGHClient(token)
 					g.CreateClient(ctx)
-					return g.Upload(ctx, c.Args().Slice(), c.String("message"), author, email)
+					return g.Upload(ctx, c.Args().Slice(), author, email, c.String("message"))
 				},
 				Usage: "upload a file",
 			},
