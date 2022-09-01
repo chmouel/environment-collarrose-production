@@ -131,8 +131,8 @@ func (g *GH) upload(ctx context.Context, args []string, commitMessage string) er
 		Ref:    github.String(fmt.Sprintf("refs/heads/%s", branch)),
 		Object: &github.GitObject{SHA: commit.SHA},
 	}, false)
-	fmt.Printf("commit has been created: %s", commit.GetHTMLURL())
-	fmt.Printf("branch %s has been updated to commit %s", branch, commit.GetSHA())
+	fmt.Printf("commit has been created: %s\n", commit.GetHTMLURL())
+	fmt.Printf("branch %s has been updated to commit %s\n", branch, commit.GetSHA())
 	return err
 }
 
