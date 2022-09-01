@@ -126,12 +126,13 @@ func (g *GH) upload(ctx context.Context, args []string, commitMessage string) er
 	if err != nil {
 		return err
 	}
-	fmt.Println(commit.GetHTMLURL())
 	// update the branch with the commit
 	_, _, err = g.client.Git.UpdateRef(ctx, dstBlob.owner, dstBlob.repo, &github.Reference{
 		Ref:    github.String(fmt.Sprintf("refs/heads/%s", branch)),
 		Object: &github.GitObject{SHA: commit.SHA},
 	}, false)
+	fmt.Printf("commit has been created: %s", commit.GetHTMLURL())
+	fmt.Printf("branch %s has been updated to commit %s", branch, commit.GetSHA())
 	return err
 }
 
